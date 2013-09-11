@@ -28,7 +28,13 @@ PV = "${SRC_VER}+svnr${SVN_REV}"
 S = "${WORKDIR}/${PN}-${SRC_VER}.svn${SVN_REV}"
 
 SRC_URI = "http://ham.zmailer.org/oh2mqk/aprx/aprx-${SRC_VER}.svn${SVN_REV}.tar.gz \
+           file://init \
 "
+
+inherit autotools update-rc.d
+
+INITSCRIPT_NAME = "aprx"
+INITSCRIPT_PARAMS = "defaults 99"
 
 SRC_URI[md5sum] = "9a842028baea4cbab00b3a3f7d008452"
 SRC_URI[sha256sum] = "8efcbe464f6da2750c18f1ae56f14a0aa8d039491a4ed06b2fc671a1700f4676"
@@ -42,4 +48,8 @@ EXTRA_OECONF = " \
 # unrecognized options such as -Wl,-O1
 LD = "${CC}"
 
-inherit autotools
+do_install_append() {
+    install -d ${D}${sysconfdir}/init.d
+    install ${WORKDIR}/init ${D}${sysconfdir}/init.d/aprx
+    chmod 755 ${D}${sysconfdir}/init.d/aprx
+}
